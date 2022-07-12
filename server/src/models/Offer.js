@@ -1,51 +1,61 @@
-const { CONTEST_STATUS_PENDING } = require("../constants");
-
+const { Model } = require('sequelize');
+const { CONTEST_STATUS_PENDING } = require('../constants');
 
 module.exports = (sequelize, DataTypes) => {
-  const Offer = sequelize.define('Offers', {
-    id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER,
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+  class Offer extends Model {
+    static associate(models) {
+      Offer.hasOne(models.Rating, { foreignKey: 'offerId', targetKey: 'id' });
 
-    },
-    contestId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    text: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    fileName: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    originalFileName: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    status: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: CONTEST_STATUS_PENDING,
-    },
-  },
-  {
-    timestamps: false,
-  });
+      Offer.belongsTo(models.User, { foreignKey: 'userId', sourceKey: 'id' });
 
-  Offer.associate = function (models) {
-    Offer.belongsTo(models.User, { foreignKey: 'user_id', sourceKey: 'id' });
-  
-    Offer.belongsTo(models.Contest,
-      { foreignKey: 'contest_id', sourceKey: 'id' });
-  };
+      Offer.belongsTo(models.Contest, {
+        foreignKey: 'contestId',
+        sourceKey: 'id',
+      });
+    }
+  }
+
+  Offer.init(
+    {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      contestId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      text: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      fileName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      originalFileName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      status: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: CONTEST_STATUS_PENDING,
+      },
+    },
+    {
+      sequelize,
+      timestamps: false,
+      modelName: 'Offer',
+      tableName: 'Offers',
+    },
+  );
 
   return Offer;
 };

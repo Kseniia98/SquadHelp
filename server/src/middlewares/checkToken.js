@@ -49,6 +49,7 @@ module.exports.checkRefreshToken = async (req, res, next) => {
     }
 
     req.tokenData = verifyRefreshToken(refreshToken);
+    next();
   } catch (error) {
     next(createHttpError(419, 'Refresh expired'));
   }

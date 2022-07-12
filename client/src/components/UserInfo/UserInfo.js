@@ -70,9 +70,9 @@ const UserInfo = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  const { data } = state.userStore;
+  const { data  } = state.userStore;
   const { isEdit } = state.userProfile;
-  return { data, isEdit };
+  return { data: data || {}, isEdit };
 };
 
 const mapDispatchToProps = (dispatch) => ({

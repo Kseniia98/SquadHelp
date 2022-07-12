@@ -10,7 +10,7 @@ const bankQueries = require('./queries/bankQueries');
 const ratingQueries = require('./queries/ratingQueries');
 const { CONTEST_STATUS_PENDING, CONTEST_STATUS_ACTIVE } = require('../constants');
 const { prepareUser } = require('../utils/user.utils');
-const { verifyRefreshToken, createSession } = require('../services/jwtService');
+const { verifyRefreshToken, createSession, refreshSession } = require('../services/jwtService');
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -45,16 +45,9 @@ module.exports.refreshSession = async (req, res, next) => {
   try {
     const { refreshToken } = req.body;
 
-    const foundToken = await RefreshToken.findOne({ where: { value: refreshToken } });
+    const response = await refreshSession(refreshToken, req.tokenData);
 
-    if (!foundToken) {
-      return next(createHttpError(404, 'Refresh token not found'));
-    }
-
-    const user = await userQueries.findUser({ id: req.tokenData.userId });
-    const tokenPair = await createSession(user);
-
-    res.status(200).send({ tokenPair, user: prepareUser(user) });
+    res.status(200).send(response);
   } catch (error) {
     next(error);
   }

@@ -24,7 +24,7 @@ const storageContestFiles = multer.diskStorage({
   },
 });
 
-const multerWithStorage = multer({ storage: storageContestFiles})
+const multerWithStorage = multer({ storage: storageContestFiles });
 
 const uploadAvatar = multerWithStorage.single('file');
 const uploadContestFiles = multerWithStorage.array(

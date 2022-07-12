@@ -1,3 +1,4 @@
+require('dotenv').config();
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
@@ -11,14 +12,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
 app.use('/public', express.static('public'));
-app.use((req, res, next) => {
-  console.log('new request', req.method, req.path);
-
-  next();
-});
-
 app.use(router);
 app.use(handlerError);
 
@@ -26,5 +20,3 @@ const server = http.createServer(app);
 server.listen(PORT,
   () => console.log(`Example app listening on port ${ PORT }!`));
 controller.createConnection(server);
-
-

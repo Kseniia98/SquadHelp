@@ -14,9 +14,7 @@ const { verifyRefreshToken, createSession, refreshSession } = require('../servic
 
 module.exports.login = async (req, res, next) => {
   try {
-    const foundUser = await userQueries.findUser({ email: req.body.email });
-
-    await userQueries.passwordCompare(req.body.password, foundUser.password);
+    const foundUser = await userQueries.checkUserLogin(req.body.email, req.body.password);
 
     const tokenPair = await createSession(foundUser);
 
@@ -25,6 +23,7 @@ module.exports.login = async (req, res, next) => {
     next(err);
   }
 };
+
 module.exports.registration = async (req, res, next) => {
   try {
     const newUser = await userQueries.userCreation(req.body);
@@ -33,11 +32,7 @@ module.exports.registration = async (req, res, next) => {
 
     res.send({ user: prepareUser(newUser), tokenPair });
   } catch (err) {
-    if (err.name === 'SequelizeUniqueConstraintError') {
-      next(new NotUniqueEmail());
-    } else {
-      next(err);
-    }
+    next(err);
   }
 };
 
